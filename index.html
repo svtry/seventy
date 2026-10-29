@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>İdil ❤️</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:linear-gradient(180deg,#8ec5fc 0%,#e0c3fc 35%,#ffc3d8 65%,#ffe0b5 100%);font-family:'Segoe UI',Arial,sans-serif}
+.sun{position:fixed;top:6%;right:8%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#fff7c2 0%,#ffe08a 50%,rgba(255,224,138,0) 72%);animation:glow 5s ease-in-out infinite}
+@keyframes glow{50%{transform:scale(1.15);opacity:.85}}
+.cloud{position:fixed;font-size:64px;opacity:.85;animation:drift linear infinite}
+@keyframes drift{from{transform:translateX(-150px)}to{transform:translateX(calc(100vw + 150px))}}
+.hills{position:fixed;left:0;bottom:0;width:100%;height:32%;z-index:1}
+#flowers{position:fixed;left:0;bottom:0;width:100%;height:26%;z-index:2;pointer-events:none}
+.flower{position:absolute;bottom:0;display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%;animation:sway ease-in-out infinite}
+.stem{width:3px;background:linear-gradient(#6bbf7a,#3f8f55);border-radius:2px}
+@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.float{position:fixed;bottom:-40px;z-index:4;opacity:0;animation:rise linear infinite;pointer-events:none}
+@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}10%{opacity:.9}100%{transform:translateY(-110vh) scale(1.2) rotate(30deg);opacity:0}}
+.petal{position:fixed;top:-40px;z-index:4;animation:fall linear infinite;pointer-events:none}
+@keyframes fall{to{transform:translate(60px,110vh) rotate(360deg)}}
+#heart{position:fixed;inset:0;z-index:3;pointer-events:none}
+#heart span{position:absolute;color:#fff;font-weight:800;text-shadow:0 0 6px #ff2d6f,0 0 14px #ff6b9d;transform:translate(-50%,-50%);animation:beat 1.6s ease-in-out infinite}
+@keyframes beat{50%{transform:translate(-50%,-50%) scale(1.25)}}
+#heart .big{animation:bigbeat 1.2s ease-in-out infinite;text-shadow:0 0 20px #ff2d6f}
+@keyframes bigbeat{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.3)}}
+</style>
+</head>
+<body>
+
+<div class="sun"></div>
+<div class="cloud" style="top:10%;animation-duration:70s">☁️</div>
+<div class="cloud" style="top:22%;animation-duration:95s;animation-delay:-40s">☁️</div>
+<div class="cloud" style="top:5%;animation-duration:120s;animation-delay:-80s">☁️</div>
+
+<svg class="hills" viewBox="0 0 1440 320" preserveAspectRatio="none">
+  <path d="M0,200 C240,120 480,260 720,190 C960,120 1200,240 1440,160 L1440,320 L0,320Z" fill="#b8e6b8"/>
+  <path d="M0,250 C300,180 560,300 820,230 C1060,170 1260,280 1440,220 L1440,320 L0,320Z" fill="#8fd49a"/>
+  <path d="M0,290 C360,240 700,320 1000,275 C1200,250 1340,300 1440,280 L1440,320 L0,320Z" fill="#6bbf7a"/>
+</svg>
+
+<div id="flowers"></div>
+<div id="heart"></div>
+
+<script>
+// Kalp şeklinde yazı
+const TXT=["İ","d","i","l"," ","S","e","n","i"," ","Ç","o","k"," ","S","e","v","i","y","o","r","u","m"," ","❤️"," "];
+function build(){
+  const box=document.getElementById('heart');
+  box.innerHTML='';
+  const W=innerWidth,H=innerHeight;
+  const scale=Math.min(W*0.92/32,H*0.78/29);
+  const cx=W/2,cy=H*0.45;
+  [1,0.76,0.52,0.28].forEach(k=>{
+    const pts=[],n=600;
+    for(let i=0;i<=n;i++){
+      const t=i/n*2*Math.PI;
+      const x=16*Math.pow(Math.sin(t),3);
+      const y=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+      pts.push([cx+x*scale*k,cy+(y-2.5)*scale*k]);
+    }
+    const cum=[0];
+    for(let i=1;i<pts.length;i++){
+      cum.push(cum[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+    }
+    const total=cum[cum.length-1];
+    const fs=Math.max(11,scale*1.2*(0.5+0.5*k));
+    const N=Math.floor(total/(fs*0.8));
+    const step=total/N;
+    let j=0;
+    for(let c=0;c<N;c++){
+      const target=c*step;
+      while(j<cum.length-1&&cum[j]<target)j++;
+      const tk=TXT[c%TXT.length];
+      if(tk===" ")continue;
+      const s=document.createElement('span');
+      s.textContent=tk;
+      s.style.left=pts[j][0]+'px';
+      s.style.top=pts[j][1]+'px';
+      s.style.fontSize=fs+'px';
+      s.style.animationDelay=(c*0.04)+'s';
+      box.appendChild(s);
+    }
+  });
+  const b=document.createElement('span');
+  b.className='big';
+  b.textContent='❤️';
+  b.style.left=cx+'px';
+  b.style.top=(cy-scale*0.5)+'px';
+  b.style.fontSize=(scale*2.6)+'px';
+  box.appendChild(b);
+}
+build();
+addEventListener('resize',build);
+
+// Çiçekler
+const fl=document.getElementById('flowers');
+const E=['🌸','🌷','🌹','🌼','🌻','💐','🌺'];
+const cnt=Math.floor(innerWidth/38);
+for(let i=0;i<cnt;i++){
+  const d=document.createElement('div');
+  d.className='flower';
+  d.style.left=(Math.random()*98)+'%';
+  d.style.animationDuration=(3+Math.random()*3)+'s';
+  d.style.animationDelay=(-Math.random()*4)+'s';
+  const h=15+Math.random()*55;
+  d.innerHTML='<div style="font-size:'+(22+Math.random()*26)+'px">'+E[Math.floor(Math.random()*E.length)]+'</div><div class="stem" style="height:'+h+'px"></div>';
+  fl.appendChild(d);
+}
+
+// Yükselen kalpler
+const H2=['❤️','💖','💗','💕','✨'];
+for(let i=0;i<28;i++){
+  const f=document.createElement('div');
+  f.className='float';
+  f.textContent=H2[Math.floor(Math.random()*H2.length)];
+  f.style.left=(Math.random()*100)+'%';
+  f.style.fontSize=(16+Math.random()*22)+'px';
+  f.style.animationDuration=(7+Math.random()*8)+'s';
+  f.style.animationDelay=(-Math.random()*12)+'s';
+  document.body.appendChild(f);
+}
+
+// Düşen yapraklar
+const P=['🌸','🌷','🌼'];
+for(let i=0;i<14;i++){
+  const p=document.createElement('div');
+  p.className='petal';
+  p.textContent=P[Math.floor(Math.random()*P.length)];
+  p.style.left=(Math.random()*100)+'%';
+  p.style.fontSize=(14+Math.random()*14)+'px';
+  p.style.animationDuration=(8+Math.random()*8)+'s';
+  p.style.animationDelay=(-Math.random()*12)+'s';
+  document.body.appendChild(p);
+}
+</script>
+</body>
+</html>
